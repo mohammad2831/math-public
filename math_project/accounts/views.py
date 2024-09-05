@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+
 from django.views import View
 from .forms import UserRegistrationForm, VerifyCodeForm, UserLoginForm
 import random
@@ -7,7 +8,60 @@ from . models import OtpCode, User
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.views import APIView
+from .serializers import UserRegisterSerializer, UserLoginSerializer
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from django.shortcuts import get_object_or_404
 
+
+class UserLoginView(APIView):
+    def post(self, request):
+        ser_data = UserLoginSerializer(data=request.data)
+        print("************************************")
+
+        if ser_data.is_valid():
+           
+            email = ser_data.validated_data['email']
+            password = ser_data.validated_data['password']
+
+           
+            user = get_object_or_404(User, email=email)
+
+           
+            if user.check_password(password):
+                token, created = Token.objects.get_or_create(user=user)
+                print(token.key)
+
+                return Response({'token': token.key, 'status': 202})
+            else:
+                return Response({'error': 'Invalid credentials'}, status=400)
+
+        return Response(ser_data.errors, status=400)
+
+
+class UserRegisterView(APIView):
+    def post(self, request):
+        ser_data = UserRegisterSerializer(data=request.data)
+        if ser_data.is_valid():
+            user = User(
+                email=ser_data.validated_data['email'],
+                phone_number=ser_data.validated_data['phone_number'],
+                full_name=ser_data.validated_data['full_name']
+            )
+            user.set_password(ser_data.validated_data['password'])
+            user.save()
+            token = Token.objects.create(user=user)
+
+            print(token.key)
+            print("************************************************************")
+            
+            return Response({'token':token.key,'status':201} )
+        
+        return Response(ser_data.errors, status=400)
+
+
+'''
 class UserRegisterView(View):
     form_class = UserRegistrationForm
     def get(self, request):
@@ -31,7 +85,7 @@ class UserRegisterView(View):
             return redirect('accounts:user_register_verify_code')
         return render(request,'accounts/register.html', {'form':form})
 
-
+'''
 
 class UserRegisterVerifyCodeView(View):
     form_class = VerifyCodeForm
@@ -67,7 +121,7 @@ class UserLogoutView(LoginRequiredMixin, View):
         messages.success(request, 'you logout succes ', 'success')
         return redirect('web:home')
 
-
+'''
 
 class UserLoginView(View):
     form_class= UserLoginForm
@@ -80,7 +134,7 @@ class UserLoginView(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            user = authenticate(request, email=cd['email'], password=cd['passwod'])
+            user = authenticate(request, email=cd['email'], password=cd['password'])
             if user is not None:
                 login(request, user)
                 messages.success(request, 'you logged in succes ', 'success')
@@ -91,7 +145,7 @@ class UserLoginView(View):
         return render(request,'accounts/login.html', {'form':form})
 
 
-
+'''
 
         
 

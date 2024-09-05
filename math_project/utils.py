@@ -1,6 +1,8 @@
 from kavenegar import *
 
 def send_otp_code(phone_number, code):
+    pass
+'''
     try:
         api = KavenegarAPI('62572B316B5464595767584E7A30645156626D7538426B68515963346436777A43657875314133683178493D')
         params = {
@@ -17,3 +19,4 @@ def send_otp_code(phone_number, code):
         print(f"HTTPException: {e}")
 
 # نمونه استفاده
+'''
