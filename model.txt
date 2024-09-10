@@ -1,0 +1,20 @@
+from django.db import models
+
+class Question(models.Model):
+    title = models.CharField(max_length=255)  # عنوان سوال
+    option1 = models.CharField(max_length=255)  # گزینه اول
+    option2 = models.CharField(max_length=255)  # گزینه دوم
+    option3 = models.CharField(max_length=255)  # گزینه سوم
+    option4 = models.CharField(max_length=255)  # گزینه چهارم
+    correct_option = models.IntegerField()  # ذخیره شماره گزینه درست (1, 2, 3 یا 4)
+
+    def __str__(self):
+        return self.title
+
+class Stage(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='stages')  # ارتباط با سوال
+    stage_text = models.CharField(max_length=255)  # متن مرحله
+    next_stage = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)  # مرحله بعد در صورت درست بودن پاسخ
+
+    def __str__(self):
+        return f"Stage {self.id} of {self.question.title}"
