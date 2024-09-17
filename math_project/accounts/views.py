@@ -1,12 +1,6 @@
-from django.shortcuts import render,redirect
-
-from django.views import View
 import random
 from utils import send_otp_code
 from . models import OtpCode, User
-from django.contrib import messages
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.views import APIView
 from .serializers import UserRegisterSerializer, UserLoginSerializer, VerifyCodeSerializer, UserProfileSerializer
 from rest_framework.response import Response
@@ -24,12 +18,9 @@ class UserProfileView(APIView):
     permission_classes = [IsAuthenticated,IsProfileOwner]
 
     def get(self, request):
- 
         user = User.objects.get(email=request.user.email)
-
         ser_data = UserProfileSerializer(user)
         return Response(ser_data.data, status=status.HTTP_200_OK)
-    
 
     def put(self, request, *args, **kwargs):
         user = request.user
@@ -40,21 +31,14 @@ class UserProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class UserLoginView(APIView):
     def post(self, request):
         ser_data = UserLoginSerializer(data=request.data)
         
-
-        if ser_data.is_valid():
-           
-            email = ser_data.validated_data['email']
-            password = ser_data.validated_data['password']
-
-           
-            user = get_object_or_404(User, email=email)
-
-           
+        if ser_data.is_valid():          
+            phone = ser_data.validated_data['phone_number']
+            password = ser_data.validated_data['password']         
+            user = get_object_or_404(User, phone_number=phone)        
             if user.check_password(password):
                 token, created = Token.objects.get_or_create(user=user)
                 print(token.key)
@@ -65,24 +49,17 @@ class UserLoginView(APIView):
 
         return Response(ser_data.errors, status=400)
 
-
-
-
-
 class UserRegisterVerifyCodeView(APIView):
 
-        
     def post(self, request):
         user_session=request.session['user_registration_info']
         code_instance = OtpCode.objects.get(phone_number=user_session['phone_number'])
-
 
         ser_data = VerifyCodeSerializer(data=request.data)
         if ser_data.is_valid():
             
             if int(ser_data.validated_data['code']) == code_instance.code:
-
-              
+      
                 user = User.objects.create_user(
                     email=user_session['email'],
                     phone_number=user_session['phone_number'],
@@ -92,11 +69,9 @@ class UserRegisterVerifyCodeView(APIView):
                 
                 code_instance.delete()
                 token = Token.objects.create(user=user)
-                return Response({'token': token.key,'status':205} )
-            
+                return Response({'token': token.key,'status':205} )    
             else:
-                return Response({'status':400} )
-            
+                return Response({'status':400} )  
         return Response({'status':401} )
 
 class UserRegisterView(APIView):
@@ -118,6 +93,39 @@ class UserRegisterView(APIView):
             return Response({'code':random_code,'status':201} )
         
         return Response(ser_data.errors, status=400)
+
+
+class UserLogoutView(APIView):
+    def post(self, request):
+        try:
+            token = Token.objects.get(user=request.user)
+            token.delete()
+            return Response({"detail": "Successfully logged out."})
+        except Token.DoesNotExist:
+            return Response({"detail": "Invalid token or user not logged in."}, status=400)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -175,12 +183,6 @@ class UserRegisterVerifyCodeView(View):
             
         return redirect('web:home')
 '''    
-
-class UserLogoutView(LoginRequiredMixin, View):
-    def get(self, request):
-        logout(request)
-        messages.success(request, 'you logout succes ', 'success')
-        return redirect('web:home')
 
 '''
 
