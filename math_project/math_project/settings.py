@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'web.apps.WebConfig',
     'accounts.apps.AccountsConfig',
     'question.apps.QuestionConfig',
+    'home.apps.HomeConfig',
 
     'rest_framework.authtoken',
 

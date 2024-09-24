@@ -6,20 +6,7 @@ class UserProfileForm(forms.ModelForm):
         model = Question
         fields = [
             'title',
-
-            'option1_title',  
-            'option1_image',
-
-            'option2_title',
-            'option2_image',
-                  
-            'option3_title',
-            'option3_image',
-                  
-            'option4_title',
-            'option4_image',
-
-            'correct_option'
+            'img'
             ]
 
     def clean_profile_picture(self):
