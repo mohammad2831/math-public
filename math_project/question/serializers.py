@@ -5,10 +5,15 @@ from rest_framework import serializers
 class StageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
-        fields = ['stage_number', 'option1_title', 'option1_image', 'option1_image_basa64',
-                  'option2_title', 'option2_image', 'option2_image_basa64',
-                  'option3_title', 'option3_image', 'option3_image_basa64',
-                  'option4_title', 'option4_image', 'option4_image_basa64',
+        fields = ['stage_number', 
+                  'option1_title', 'option1_image_base64',
+
+                  'option2_title', 'option2_image_base64',
+
+                  'option3_title', 'option3_image_base64',
+
+                  'option4_title', 'option4_image_base64',
+                  
                   'correct_option']
 
 
@@ -35,12 +40,36 @@ class SelectQuestionSerializer(serializers.ModelSerializer):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class AllQuestionSerializer(serializers.ModelSerializer):
     is_solved = serializers.SerializerMethodField()
 
     class Meta:
         model = Question
-        fields = ['title', 'img_base64', 'difficulty','is_solved', 'score']
+        fields = ['title', 'img_base64', 'difficulty','is_solved']
 
     def get_is_solved(self, obj):
         user = self.context['request'].user

@@ -5,7 +5,7 @@ from accounts.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import QuestionSerializer , StageSerializer,AllQuestionSerializer
+from .serializers import QuestionSerializer , StageSerializer,AllQuestionSerializer, SelectQuestionSerializer
 
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -14,8 +14,18 @@ from django.shortcuts import render, get_object_or_404, redirect
 class AllQuestionView(APIView):
     def get(self, request):
         questions = Question.objects.all()
+
+
+        q= Question.objects.get(id=8)
+        
+        print(q.img_base64)
+
+
         serializer = AllQuestionSerializer(questions, many=True, context={'request': request})
         return Response(serializer.data)
+
+
+
 
 class QuestionView(APIView):
     def get(self, request, id_q, id_s):
@@ -73,7 +83,10 @@ class SelectQuestionView(APIView):
     def get(self,request, id_q):
         question = get_object_or_404(Question, id=id_q)
 
-        pass
+
+        ser_data = SelectQuestionSerializer(question)
+        return Response(ser_data.data)
+
 
 
 

@@ -5,7 +5,7 @@ from .utils import convert_and_remove_images
 class Question(models.Model):
     title = models.CharField(max_length=255)  
     img = models.ImageField(null= True)
-    img_base64 = models.TextField(null = True) 
+    img_base64 = models.TextField(null = True, blank=True) 
     description = models.TextField(null=True)
     score = models.SmallIntegerField(null=True)
 
@@ -24,6 +24,11 @@ class Question(models.Model):
     
     def __str__(self):
         return f"{self.id} - {self.title}"
+    
+    def save(self, *args, **kwargs):
+        image_fields = ['img']
+        convert_and_remove_images(self, image_fields)
+        super().save(*args, **kwargs)
     
        
     
