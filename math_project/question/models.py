@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from .utils import convert_and_remove_images
 
 class Question(models.Model):
     title = models.CharField(max_length=255)  
@@ -27,32 +28,36 @@ class Question(models.Model):
        
     
 
+
 class Stage(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='stages')
     stage_number = models.PositiveIntegerField()  
-        
-    option1_title = models.CharField(max_length=255,default="")
+
+    option1_title = models.CharField(max_length=255, default="")
     option1_image = models.ImageField(null=True)
-    option1_image_basa64 = models.TextField(blank=True, null=True)
+    option1_image_base64 = models.TextField(blank=True, null=True)
 
-    option2_title = models.CharField(max_length=255,default="")
+    option2_title = models.CharField(max_length=255, default="")
     option2_image = models.ImageField(null=True)
-    option2_image_basa64 = models.TextField(blank=True, null=True)
+    option2_image_base64 = models.TextField(blank=True, null=True)
 
-    option3_title = models.CharField(max_length=255,default="")
+    option3_title = models.CharField(max_length=255, default="")
     option3_image = models.ImageField(null=True)
-    option3_image_basa64 = models.TextField(blank=True, null=True)
+    option3_image_base64 = models.TextField(blank=True, null=True)
 
-    option4_title = models.CharField(max_length=255,default="")
+    option4_title = models.CharField(max_length=255, default="")
     option4_image = models.ImageField(null=True)
-    option4_image_basa64 = models.TextField(blank=True, null=True)
-    
+    option4_image_base64 = models.TextField(blank=True, null=True)
 
-    correct_option = models.CharField(max_length=255, default=1)  
+    correct_option = models.CharField(max_length=255, default='1')  
 
     def __str__(self):
         return f"Stage {self.stage_number} for {self.question.title}"
 
+    def save(self, *args, **kwargs):
+        image_fields = ['option1_image', 'option2_image', 'option3_image', 'option4_image']
+        convert_and_remove_images(self, image_fields)
+        super().save(*args, **kwargs)
 
 
 
