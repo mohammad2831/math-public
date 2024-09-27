@@ -15,7 +15,6 @@ class AllQuestionView(APIView):
     def get(self, request):
         questions = Question.objects.all()
 
-
         q= Question.objects.get(id=8)
         
         print(q.img_base64)
@@ -28,6 +27,9 @@ class AllQuestionView(APIView):
 
 
 class QuestionView(APIView):
+
+    
+    '''
     def get(self, request, id_q, id_s):
         question = get_object_or_404(Question, id=id_q)
         stage = Stage.objects.filter(question=question, stage_number=id_s).first()
@@ -42,7 +44,7 @@ class QuestionView(APIView):
             'question': question_serializer.data,
             'stage': stage_serializer.data,
         })
-    
+    '''
 
     def post(self, request, id_q, id_s):
         question = get_object_or_404(Question, id=id_q)

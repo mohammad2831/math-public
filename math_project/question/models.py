@@ -41,18 +41,22 @@ class Stage(models.Model):
     option1_title = models.CharField(max_length=255, default="")
     option1_image = models.ImageField(null=True)
     option1_image_base64 = models.TextField(blank=True, null=True)
+    option1_descrption = models.TextField(blank=True, null= True)
 
     option2_title = models.CharField(max_length=255, default="")
     option2_image = models.ImageField(null=True)
     option2_image_base64 = models.TextField(blank=True, null=True)
+    option2_descrption = models.TextField(blank=True, null= True)
 
     option3_title = models.CharField(max_length=255, default="")
     option3_image = models.ImageField(null=True)
     option3_image_base64 = models.TextField(blank=True, null=True)
+    option3_descrption = models.TextField(blank=True, null= True)
 
     option4_title = models.CharField(max_length=255, default="")
     option4_image = models.ImageField(null=True)
     option4_image_base64 = models.TextField(blank=True, null=True)
+    option4_descrption = models.TextField(blank=True, null= True)
 
     correct_option = models.CharField(max_length=255, default='1')  
 

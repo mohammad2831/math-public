@@ -2,6 +2,38 @@ from rest_framework import serializers
 from .models import User
 
 
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+
+    new_password = serializers.CharField(write_only=True)
+
+   
+    
+
+
+
+
+
+
+class OtpResetPasswordSerializer(serializers.Serializer):
+    code = serializers.IntegerField()
+
+
+
+
+
+
+
+class UserForgotpasswordSerializer(serializers.Serializer):
+   
+    phone = serializers.CharField(max_length=11)
+    def validate_phone_number(self, value):
+        if len(value) < 10 or not value.isdigit():
+            raise serializers.ValidationError("Please enter a valid phone number.")
+        return value
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -9,7 +41,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
-    phone_number = serializers.EmailField()
+    phone_number = serializers.CharField()
     password = serializers.CharField(write_only=True)
 
 

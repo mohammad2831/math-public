@@ -11,6 +11,11 @@ urlpatterns =[
     path('logout/', views.UserLogoutView.as_view(), name='user_logout'), 
 
 
+    path('reset_password/',views.ResetPasswordView.as_view(), name='reset_password'),
+    path('otp_reset_password/', views.OtpResetPasswordView.as_view(), name='otp_reset_password'),
+    path('forgot_password/', views.UserForgotpasswordView.as_view(), name='forgot_password')
+
+
 
 
   

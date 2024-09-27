@@ -2,7 +2,7 @@ import random
 from utils import send_otp_code
 from . models import OtpCode, User
 from rest_framework.views import APIView
-from .serializers import UserRegisterSerializer, UserLoginSerializer, VerifyCodeSerializer, UserProfileSerializer
+from .serializers import UserRegisterSerializer, UserLoginSerializer, VerifyCodeSerializer, UserProfileSerializer, UserForgotpasswordSerializer, OtpResetPasswordSerializer, ResetPasswordSerializer
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
@@ -12,7 +12,108 @@ from rest_framework.authentication import TokenAuthentication
 from .permissions import IsProfileOwner
 
 
+#reset and change the password
+class ResetPasswordView(APIView):
+    authentication_classes = [TokenAuthentication] 
 
+    def put(self, request):
+        user_session = request.session.get('forgot_password_info')
+        if not user_session:
+            return Response({'message': 'Session expired or invalid.'}, status=400)
+
+        try:
+            user = User.objects.get(phone_number=user_session['phone_number'])
+        except User.DoesNotExist:
+            return Response({'message': 'User not found.'}, status=404)
+
+        ser_data = ResetPasswordSerializer(data=request.data)
+        if ser_data.is_valid():
+            new_password = ser_data.validated_data['new_password']
+            
+            user.set_password(new_password)
+            user.save()  
+
+            return Response({'message': 'Password updated successfully.'}, status=200)
+        return Response(ser_data.errors, status=400)
+
+
+
+#verify otp code for forgot password function
+class OtpResetPasswordView(APIView):
+     def post(self, request):
+        user_session=request.session['forgot_password_info']
+        code_instance = OtpCode.objects.get(phone_number=user_session['phone_number'])
+        user = User.objects.get(phone_number=user_session['phone_number'] )
+
+
+        ser_data = OtpResetPasswordSerializer(data=request.data)
+        if ser_data.is_valid():
+           
+            code = ser_data.validated_data['code']
+
+            try:
+                                
+              
+                if int(code) == code_instance.code:  
+                    token, created = Token.objects.get_or_create(user=user)
+                    print(token.key)
+                    return Response({'status': 201, 'message': 'Code verified successfully.','token': token.key,})
+                else:
+                    return Response({'status': 407, 'message': 'Invalid code.'}, status=400)
+            except OtpCode.DoesNotExist:
+                return Response({'status': 407, 'message': 'Phone number not found.'}, status=404)
+            
+
+
+        return Response({'status': 407, 'message': 'Invalid data.'}, status=400)
+
+
+
+
+
+
+# send otp code for forgot password function
+class UserForgotpasswordView(APIView):
+    def post(self, request):
+        ser_data = UserForgotpasswordSerializer(data = request.data)
+        if ser_data.is_valid():          
+            phone = ser_data.validated_data['phone']
+            user = get_object_or_404(User, phone_number=phone)
+
+
+            random_code = random.randint(1000, 9999)
+
+
+            request.session['forgot_password_info'] = {
+                'phone_number' : ser_data.validated_data['phone'],
+                'code':random_code
+            }
+
+            OtpCode.objects.create(phone_number = ser_data.validated_data['phone'], code=random_code)
+            return Response({'code':random_code,'status':201} )
+
+
+        return Response(ser_data.errors, status=400)
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
 class UserProfileView(APIView):
     authentication_classes = [TokenAuthentication] 
     permission_classes = [IsAuthenticated,IsProfileOwner]
@@ -50,7 +151,6 @@ class UserLoginView(APIView):
         return Response(ser_data.errors, status=400)
 
 class UserRegisterVerifyCodeView(APIView):
-
     def post(self, request):
         user_session=request.session['user_registration_info']
         code_instance = OtpCode.objects.get(phone_number=user_session['phone_number'])
@@ -103,29 +203,6 @@ class UserLogoutView(APIView):
             return Response({"detail": "Successfully logged out."})
         except Token.DoesNotExist:
             return Response({"detail": "Invalid token or user not logged in."}, status=400)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
