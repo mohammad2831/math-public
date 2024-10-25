@@ -90,18 +90,6 @@ class QuestionView(APIView):
             return Response({'message': message}, status=status.HTTP_400_BAD_REQUEST)
         
 
-
-
-
-
-
-
-
-
-
-
-
-
 '''
     def get(self, request, id_q, id_s):
         question = get_object_or_404(Question, id=id_q)

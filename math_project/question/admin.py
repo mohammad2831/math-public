@@ -8,16 +8,16 @@ class StageInlineForm(forms.ModelForm):
         model = Stage
         fields = [
             'option1_title',  
-            'option1_image',
+    
             'option2_title',
-            'option2_image',
+        
             'correct_option'
         ]  
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk:
-            self.fields['question'].queryset = Question.objects.filter(id=self.instance.question.id)
+      #  if self.instance and self.instance.pk:
+       #     self.fields['question'].queryset = Question.objects.filter(id=self.instance.question.id)
 
 
 
@@ -30,19 +30,19 @@ class StageInline(admin.StackedInline):
               'stage_number',
 
               'option1_title',
-              'option1_image',
+              'option1_latex',
               'option1_descrption',
 
               'option2_title',
-              'option2_image',
+              'option2_latex',
               'option2_descrption',
 
               'option3_title',
-              'option3_image',
+              'option3_latex',
               'option3_descrption',
 
               'option4_title',
-              'option4_image',
+              'option4_latex',
               'option4_descrption',
 
               'correct_option'] 
@@ -59,23 +59,24 @@ class QuestionAdmin(admin.ModelAdmin):
 
 class StageAdmin(admin.ModelAdmin):
     model= Stage
+
     fields = [
               'stage_number',
 
               'option1_title',
-              'option1_image',
+              'option1_latex',
               'option1_descrption',
 
               'option2_title',
-              'option2_image',
+              'option2_latex',
               'option2_descrption',
 
               'option3_title',
-              'option3_image',
+              'option3_latex',
               'option3_descrption',
 
               'option4_title',
-              'option4_image',
+              'option4_latex',
               'option4_descrption',
 
               'correct_option'] 

@@ -6,7 +6,7 @@ class UserProfileForm(forms.ModelForm):
         model = Question
         fields = [
             'title',
-            'img'
+            'question_latex'
             ]
 
     def clean_profile_picture(self):
@@ -28,14 +28,14 @@ class StageAdminForms(forms.ModelForm):
     model = Stage
     fields = [
             'option1_title',  
-            'option1_image',
+            'option1_latex',
 
             'option2_title',
-            'option2_image',
+            'option2_latex',
                   
             'option3_title',
-            'option3_image',
+            'option3_latex',
                   
             'option4_title',
-            'option4_image'
+            'option4_latex'
             ]

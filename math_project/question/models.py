@@ -4,8 +4,7 @@ from .utils import convert_and_remove_images
 
 class Question(models.Model):
     title = models.CharField(max_length=255)  
-    img = models.ImageField(null= True)
-    img_base64 = models.TextField(null = True, blank=True) 
+    question_latex = models.TextField(null = True, blank=True) 
     description = models.TextField(null=True)
     score = models.SmallIntegerField(null=True)
 
@@ -25,10 +24,7 @@ class Question(models.Model):
     def __str__(self):
         return f"{self.id} - {self.title}"
     
-    def save(self, *args, **kwargs):
-        image_fields = ['img']
-        convert_and_remove_images(self, image_fields)
-        super().save(*args, **kwargs)
+   
     
        
     
@@ -39,23 +35,19 @@ class Stage(models.Model):
     stage_number = models.PositiveIntegerField()  
 
     option1_title = models.CharField(max_length=255, default="")
-    option1_image = models.ImageField(null=True)
-    option1_image_base64 = models.TextField(blank=True, null=True)
+    option1_latex = models.TextField(blank=True, null=True)
     option1_descrption = models.TextField(blank=True, null= True)
 
     option2_title = models.CharField(max_length=255, default="")
-    option2_image = models.ImageField(null=True)
-    option2_image_base64 = models.TextField(blank=True, null=True)
+    option2_latex = models.TextField(blank=True, null=True)
     option2_descrption = models.TextField(blank=True, null= True)
 
     option3_title = models.CharField(max_length=255, default="")
-    option3_image = models.ImageField(null=True)
-    option3_image_base64 = models.TextField(blank=True, null=True)
+    option3_latex = models.TextField(blank=True, null=True)
     option3_descrption = models.TextField(blank=True, null= True)
 
     option4_title = models.CharField(max_length=255, default="")
-    option4_image = models.ImageField(null=True)
-    option4_image_base64 = models.TextField(blank=True, null=True)
+    option4_latex = models.TextField(blank=True, null=True)
     option4_descrption = models.TextField(blank=True, null= True)
 
     correct_option = models.CharField(max_length=255, default='1')  
@@ -63,11 +55,7 @@ class Stage(models.Model):
     def __str__(self):
         return f"Stage {self.stage_number} for {self.question.title}"
 
-    def save(self, *args, **kwargs):
-        image_fields = ['option1_image', 'option2_image', 'option3_image', 'option4_image']
-        convert_and_remove_images(self, image_fields)
-        super().save(*args, **kwargs)
-
+   
 
 
 
